@@ -72,3 +72,27 @@ func TestRmFile(t *testing.T) {
 		t.Errorf("Can't delete %s file", tmpfile.Name())
 	}
 }
+
+func TestEmptyDir(t *testing.T) {
+	filenames := []string{"a", "b", "c"}
+	paths := make([]string, 0)
+	
+	for _, name := range filenames {
+		tmpfile, err := ioutil.TempFile("", name)
+		if err != nil {
+			t.Error(err)
+		}
+		tmpfile.Close()
+		paths = append(paths, tmpfile.Name())
+	}
+	
+	dir := filepath.Dir(paths[0])
+	emptyDir(dir)
+	
+	for _, name := range paths {
+		if _, err := os.Stat(name); os.IsExist(err) {
+			t.Errorf("Directory %s not empty", dir)
+			break
+		}
+	}
+}
