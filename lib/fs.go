@@ -23,6 +23,9 @@ func init() {
 
 	trashInfoDir = filepath.Join(trashDir, "info")
 	trashFilesDir = filepath.Join(trashDir, "files")
+
+	ensureDir(trashInfoDir, 0700)
+	ensureDir(trashFilesDir, 0700)
 }
 
 func getFilesInDir(path string) []string {
