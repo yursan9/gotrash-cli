@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"sort"
 	"strings"
@@ -12,12 +13,12 @@ import (
 )
 
 const TrashInfoTemp = `[Trash Info]
-Path={{.Path}}
+Path={{.Path | escape}}
 DeletionDate={{.DeletionDate | format}}
 `
 
 type TrashInfo struct {
-	Name     string
+	Name         string
 	Path         string
 	DeletionDate time.Time
 }
@@ -31,6 +32,9 @@ func NewTrashInfo(path string) *TrashInfo {
 
 func (ti TrashInfo) WriteFile(path string) error {
 	funcMap := template.FuncMap{
+		"escape": func(uri string) string {
+			return url.PathEscape(uri)
+		},
 		"format": func(t time.Time) string {
 			return t.Format("2006-01-02T15:04:05")
 		},
@@ -72,7 +76,8 @@ func newTrashInfoList(files []string) []TrashInfo {
 
 			switch {
 			case strings.HasPrefix(scanner.Text(), "Path="):
-				item.Path = strings.TrimPrefix(scanner.Text(), "Path=")
+				path := strings.TrimPrefix(scanner.Text(), "Path=")
+				item.Path, _ = url.PathUnescape(path)
 			case strings.HasPrefix(scanner.Text(), "DeletionDate="):
 				dateString := strings.TrimPrefix(scanner.Text(), "DeletionDate=")
 				date, _ := time.Parse("2006-01-02T15:04:05", dateString)
