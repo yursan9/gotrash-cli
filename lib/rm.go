@@ -12,7 +12,7 @@ func RmTrashPrompted(files []string) {
 		fmt.Printf("Deleting... %s\n", file)
 	}
 
-	if ok := prompt("Are you sure"); ok {
+	if prompt("Are you sure") {
 		for _, file := range files {
 			rmTrash(file)
 		}

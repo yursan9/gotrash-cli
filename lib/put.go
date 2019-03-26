@@ -17,11 +17,11 @@ func init() {
 
 func PutFiles(files []string) {
 	for _, file := range files {
-		PutFile(file)
+		putFile(file)
 	}
 }
 
-func PutFile(file string) {
+func putFile(file string) {
 	if _, err := os.Stat(file); os.IsNotExist(err) {
 		fmt.Println("File didn't exist", file)
 		return
