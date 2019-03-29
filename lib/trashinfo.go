@@ -33,7 +33,9 @@ func NewTrashInfo(path string) *TrashInfo {
 func (ti TrashInfo) WriteFile(path string) error {
 	funcMap := template.FuncMap{
 		"escape": func(uri string) string {
-			return url.PathEscape(uri)
+			path := url.PathEscape(uri)
+			path = strings.Replace(path, "%2F", "/", -1)
+			return path
 		},
 		"format": func(t time.Time) string {
 			return t.Format("2006-01-02T15:04:05")
