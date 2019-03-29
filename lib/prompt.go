@@ -17,9 +17,9 @@ func prompt(text string) bool {
 
 func promptInt(text string) int {
 	var answer int
-	
+
 	fmt.Print(text, "? ")
 	fmt.Scanln(&answer)
-	
+
 	return answer
 }
