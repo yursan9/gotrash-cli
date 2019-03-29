@@ -14,3 +14,12 @@ func prompt(text string) bool {
 
 	return false
 }
+
+func promptInt(text string) int {
+	var answer int
+	
+	fmt.Print(text, "? ")
+	fmt.Scanln(&answer)
+	
+	return answer
+}
