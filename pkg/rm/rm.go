@@ -1,13 +1,15 @@
-package lib
+package rm
 
 import (
 	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
+	"trash-cli/pkg/fs"
+	"trash-cli/pkg/trashinfo"
 )
 
-func RmTrashPrompted(files []string) {
+func Run(files []string) {
 	for _, file := range files {
 		fmt.Printf("Deleting... %s\n", file)
 	}
@@ -20,8 +22,9 @@ func RmTrashPrompted(files []string) {
 }
 
 func rmTrash(path string) {
-	files := getFilesInDir(trashInfoDir)
-	trashInfoList := newTrashInfoList(files)
+	trashInfoDir := fs.GetTrashInfoDir()
+	trashFilesDir := fs.GetTrashFilesDir()
+	trashInfoList := trashinfo.NewTrashList(trashInfoDir)
 
 	var trashInfoFile string
 	for _, item := range trashInfoList {
@@ -40,6 +43,19 @@ func rmTrash(path string) {
 	trashFile = filepath.Base(trashFile)
 	trashFile = filepath.Join(trashFilesDir, trashFile)
 
-	rmFile(trashInfoFile)
-	rmFile(trashFile)
+	fs.RmFile(trashInfoFile)
+	fs.RmFile(trashFile)
+}
+
+func prompt(text string) bool {
+	var answer string
+
+	fmt.Print(text, " [Yes/No]? ")
+	fmt.Scanln(&answer)
+
+	if answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" {
+		return true
+	}
+
+	return false
 }

@@ -1,4 +1,4 @@
-package lib
+package put
 
 import (
 	"fmt"
@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strings"
 	"time"
+	"trash-cli/pkg/fs"
+	"trash-cli/pkg/trashinfo"
 
 	"github.com/phayes/permbits"
 )
@@ -15,19 +17,22 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-func PutFiles(files []string) {
+func Run(files []string) {
 	for _, file := range files {
 		putFile(file)
 	}
 }
 
 func putFile(file string) {
+	trashInfoDir := fs.GetTrashInfoDir()
+	trashFilesDir := fs.GetTrashFilesDir()
+
 	if _, err := os.Stat(file); os.IsNotExist(err) {
 		fmt.Println("File didn't exist", file)
 		return
 	}
 
-	absFile := ensureAbsPath(file)
+	absFile := fs.EnsureAbsPath(file)
 	endFile := filepath.Base(file)
 
 	parentDir := filepath.Dir(absFile)
@@ -38,7 +43,7 @@ func putFile(file string) {
 		os.Exit(1)
 	}
 
-	info := NewTrashInfo(absFile)
+	info := trashinfo.New(absFile)
 	err := info.WriteFile(filepath.Join(trashInfoDir, endFile))
 
 	var randNum int
@@ -61,7 +66,7 @@ func putFile(file string) {
 		newPath = filename.String()
 	}
 
-	err = moveFile(absFile, newPath)
+	err = fs.MoveFile(absFile, newPath)
 	if err != nil {
 		fmt.Println("Something wrong file move")
 		os.Exit(1)

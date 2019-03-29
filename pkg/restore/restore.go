@@ -1,15 +1,17 @@
-package lib
+package restore
 
 import (
 	"fmt"
 	"path/filepath"
 	"strings"
+	"trash-cli/pkg/fs"
+	"trash-cli/pkg/trashinfo"
 )
 
-func RestoreTrash() {
-	files := getFilesInDir(trashInfoDir)
-
-	trashInfoList := newTrashInfoList(files)
+func Run() {
+	trashInfoDir := fs.GetTrashInfoDir()
+	trashFilesDir := fs.GetTrashFilesDir()
+	trashInfoList := trashinfo.NewTrashList(trashInfoDir)
 
 	for i, item := range trashInfoList {
 		var formattedTime = item.DeletionDate.Format("2006-01-02 15:04:05")
@@ -24,6 +26,15 @@ func RestoreTrash() {
 	orig = filepath.Join(trashFilesDir, orig)
 	dest := t.Path
 
-	moveFile(orig, dest)
-	rmFile(t.Name)
+	fs.MoveFile(orig, dest)
+	fs.RmFile(t.Name)
+}
+
+func promptInt(text string) int {
+	var answer int
+
+	fmt.Print(text, "? ")
+	fmt.Scanln(&answer)
+
+	return answer
 }

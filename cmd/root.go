@@ -18,7 +18,7 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"trash-cli/lib"
+	"trash-cli/pkg/list"
 
 	"github.com/spf13/cobra"
 )
@@ -35,7 +35,7 @@ If [command] is omitted, the default is to list the Trash.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		lib.ListFiles()
+		list.Run()
 	},
 }
 

@@ -20,21 +20,21 @@ func GetTrashDir() string {
 	return trashDir
 }
 
-func GetTrashInfoDir(xdg string) string {
+func GetTrashInfoDir() string {
 	trashDir := GetTrashDir()
-	trashInfoDir = filepath.Join(trashDir, "info")
+	trashInfoDir := filepath.Join(trashDir, "info")
 
-	ensureDir(trashInfoDir, 0700)
-	
+	EnsureDir(trashInfoDir, 0700)
+
 	return trashInfoDir
 }
 
-func GetTrashFilesDir(xdg string) string {
+func GetTrashFilesDir() string {
 	trashDir := GetTrashDir()
-	trashFilesDir = filepath.Join(trashDir, "files")
+	trashFilesDir := filepath.Join(trashDir, "files")
 
-	ensureDir(trashFilesDir, 0700)
-	
+	EnsureDir(trashFilesDir, 0700)
+
 	return trashFilesDir
 }
 

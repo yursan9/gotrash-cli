@@ -1,4 +1,4 @@
-package lib
+package trashinfo
 
 import (
 	"bufio"
@@ -6,10 +6,10 @@ import (
 	"log"
 	"net/url"
 	"os"
-	"sort"
 	"strings"
 	"text/template"
 	"time"
+	"trash-cli/pkg/fs"
 )
 
 const TrashInfoTemp = `[Trash Info]
@@ -23,7 +23,7 @@ type TrashInfo struct {
 	DeletionDate time.Time
 }
 
-func NewTrashInfo(path string) *TrashInfo {
+func New(path string) *TrashInfo {
 	return &TrashInfo{
 		Path:         path,
 		DeletionDate: time.Now(),
@@ -49,7 +49,7 @@ func (ti TrashInfo) WriteFile(path string) error {
 	var filename strings.Builder
 	fmt.Fprint(&filename, path, ".trashinfo")
 
-	err := atomicWrite(filename.String(), content.String())
+	err := fs.AtomicWrite(filename.String(), content.String())
 	if err != nil {
 		return err
 	}
@@ -57,8 +57,11 @@ func (ti TrashInfo) WriteFile(path string) error {
 	return nil
 }
 
-func newTrashInfoList(files []string) []TrashInfo {
-	list := make([]TrashInfo, 0)
+type TrashList []TrashInfo
+
+func NewTrashList(dir string) TrashList {
+	list := make(TrashList, 0)
+	files := fs.GetFilesInDir(dir)
 
 	for _, file := range files {
 		f, err := os.Open(file)
@@ -90,13 +93,5 @@ func newTrashInfoList(files []string) []TrashInfo {
 		list = append(list, item)
 	}
 
-	sort.Sort(ByDeletion(list))
-
 	return list
 }
-
-type ByDeletion []TrashInfo
-
-func (by ByDeletion) Len() int           { return len(by) }
-func (by ByDeletion) Swap(i, j int)      { by[i], by[j] = by[j], by[i] }
-func (by ByDeletion) Less(i, j int) bool { return by[i].DeletionDate.Before(by[j].DeletionDate) }
