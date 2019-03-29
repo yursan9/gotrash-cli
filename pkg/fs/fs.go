@@ -1,4 +1,4 @@
-package lib
+package fs
 
 import (
 	"log"
@@ -6,10 +6,7 @@ import (
 	"path/filepath"
 )
 
-var trashInfoDir string
-var trashFilesDir string
-
-func init() {
+func GetTrashDir() string {
 	xdgDataPath, ok := os.LookupEnv("XDG_DATA_HOME")
 	if !ok {
 		userHomeDir, err := os.UserHomeDir()
@@ -20,20 +17,33 @@ func init() {
 	}
 
 	trashDir := filepath.Join(xdgDataPath, "Trash")
-
-	trashInfoDir = filepath.Join(trashDir, "info")
-	trashFilesDir = filepath.Join(trashDir, "files")
-
-	ensureDir(trashInfoDir, 0700)
-	ensureDir(trashFilesDir, 0700)
+	return trashDir
 }
 
-func getFilesInDir(path string) []string {
+func GetTrashInfoDir(xdg string) string {
+	trashDir := GetTrashDir()
+	trashInfoDir = filepath.Join(trashDir, "info")
+
+	ensureDir(trashInfoDir, 0700)
+	
+	return trashInfoDir
+}
+
+func GetTrashFilesDir(xdg string) string {
+	trashDir := GetTrashDir()
+	trashFilesDir = filepath.Join(trashDir, "files")
+
+	ensureDir(trashFilesDir, 0700)
+	
+	return trashFilesDir
+}
+
+func GetFilesInDir(path string) []string {
 	files, _ := filepath.Glob(filepath.Join(path, "*"))
 	return files
 }
 
-func atomicWrite(path, content string) error {
+func AtomicWrite(path, content string) error {
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_EXCL, 0644)
 	if err != nil {
 		return err
@@ -44,23 +54,23 @@ func atomicWrite(path, content string) error {
 	return nil
 }
 
-func moveFile(path, dest string) error {
+func MoveFile(path, dest string) error {
 	return os.Rename(path, dest)
 }
 
-func ensureDir(path string, perm os.FileMode) error {
+func EnsureDir(path string, perm os.FileMode) error {
 	return os.MkdirAll(path, perm)
 }
 
-func rmFile(path string) error {
+func RmFile(path string) error {
 	return os.Remove(path)
 }
 
-func emptyDir(path string) error {
+func EmptyDir(path string) error {
 	return os.RemoveAll(path)
 }
 
-func ensureAbsPath(path string) string {
+func EnsureAbsPath(path string) string {
 	newPath, _ := filepath.Abs(path)
 	return newPath
 }
