@@ -21,6 +21,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	terse bool
+)
+
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
@@ -32,7 +36,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		list.Run()
+		list.Run(terse)
 	},
 }
 
@@ -47,5 +51,5 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	listCmd.Flags().BoolVarP(&terse, "terse", "t", false, "Only output filename")
 }

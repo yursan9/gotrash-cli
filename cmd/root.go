@@ -35,7 +35,7 @@ If [command] is omitted, the default is to list the Trash.`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		list.Run()
+		list.Run(false)
 	},
 }
 
