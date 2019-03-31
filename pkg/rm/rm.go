@@ -9,30 +9,39 @@ import (
 	"trash-cli/pkg/trashinfo"
 )
 
-func Run(files []string) {
+func Run(files []string, pattern string, interactive bool) {
+	trashInfoDir := fs.GetTrashInfoDir()
+	trashlist := trashinfo.NewTrashList(trashInfoDir)
+	
+	if pattern != "" {
+		matched := trashlist.MatchTrash(pattern)
+		files = append(files, matched...)
+	}
+
+	if interactive {
+		for _, file := range files {
+			fmt.Printf("Deleting... %s\n", file)
+			if prompt() {
+				rmTrash(trashlist, file)
+			}
+		}
+		return
+	}
+
 	for _, file := range files {
 		fmt.Printf("Deleting... %s\n", file)
 	}
 
-	if prompt("Are you sure") {
+	if prompt() {
 		for _, file := range files {
-			rmTrash(file)
+			rmTrash(trashlist, file)
 		}
 	}
 }
 
-func rmTrash(path string) {
-	trashInfoDir := fs.GetTrashInfoDir()
+func rmTrash(trashlist trashinfo.TrashList, path string) {
 	trashFilesDir := fs.GetTrashFilesDir()
-	trashInfoList := trashinfo.NewTrashList(trashInfoDir)
-
-	var trashInfoFile string
-	for _, item := range trashInfoList {
-		if item.Path == path {
-			trashInfoFile = item.Name
-			break
-		}
-	}
+	trashInfoFile := trashlist.FindTrash(path)
 
 	if trashInfoFile == "" {
 		fmt.Println("No such file in trash")
@@ -47,13 +56,13 @@ func rmTrash(path string) {
 	fs.RmFile(trashFile)
 }
 
-func prompt(text string) bool {
+func prompt() bool {
 	var answer string
 
-	fmt.Print(text, " [Yes/No]? ")
+	fmt.Print("Are you sure [Yes/No]? ")
 	fmt.Scanln(&answer)
 
-	if answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" {
+	if strings.HasPrefix(answer, "y") || strings.HasPrefix(answer, "Y") {
 		return true
 	}
 

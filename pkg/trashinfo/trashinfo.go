@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/url"
 	"os"
+	"path/filepath"
+	"sort"
 	"strings"
 	"text/template"
 	"time"
@@ -94,4 +96,45 @@ func NewTrashList(dir string) TrashList {
 	}
 
 	return list
+}
+
+func (l TrashList) FindTrash(path string) string {
+	l.SortByPath()
+
+	i := sort.Search(len(l), func(i int) bool { return l[i].Path >= path })
+	if i < len(l) && l[i].Path == path {
+		return l[i].Name
+	}
+
+	return ""
+}
+
+func (l TrashList) MatchTrash(pattern string) []string {
+	list := make([]string, 0)
+	for _, item := range l {
+		base := filepath.Base(item.Path)
+		match, err := filepath.Match(pattern, base)
+		if err != nil {
+			fmt.Println("Bad pattern")
+			os.Exit(1)
+		}
+
+		if match {
+			list = append(list, item.Path)
+		}
+	}
+
+	return list
+}
+
+func (l TrashList) SortByDate() {
+	sort.Slice(l, func(i, j int) bool {
+		return l[i].DeletionDate.Before(l[j].DeletionDate)
+	})
+}
+
+func (l TrashList) SortByPath() {
+	sort.Slice(l, func(i, j int) bool {
+		return l[i].Path < l[j].Path
+	})
 }

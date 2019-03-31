@@ -21,18 +21,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	interactive bool
+	pattern     string
+)
+
 // rmCmd represents the rm command
 var rmCmd = &cobra.Command{
 	Use:   "rm",
 	Short: "Remove the file from the trash",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Long: `Permanently remove files from trash. Enter former absolute path
+of files or use pattern to delete files that match the pattern.`,
+	//Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		rm.Run(args)
+		rm.Run(args, pattern, interactive)
 	},
 }
 
@@ -47,5 +49,6 @@ func init() {
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// rmCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rmCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "Prompt before every removal")
+	rmCmd.Flags().StringVarP(&pattern, "pattern", "p", "", "Remove file that match the pattern")
 }
