@@ -15,10 +15,10 @@ func Run() {
 
 	for i, item := range trashInfoList {
 		var formattedTime = item.DeletionDate.Format("2006-01-02 15:04:05")
-		fmt.Println(i+1, formattedTime, item.Path)
+		fmt.Println(i, formattedTime, item.Path)
 	}
 
-	n := promptInt("Select number to restore") - 1
+	n := promptInt("Select number to restore")
 	t := trashInfoList[n]
 
 	orig := filepath.Base(t.Name)
