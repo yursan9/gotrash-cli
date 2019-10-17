@@ -9,8 +9,6 @@ import (
 	"time"
 	"trash-cli/pkg/fs"
 	"trash-cli/pkg/trashinfo"
-
-	"github.com/phayes/permbits"
 )
 
 func init() {
@@ -36,9 +34,8 @@ func putFile(file string) {
 	endFile := filepath.Base(file)
 
 	parentDir := filepath.Dir(absFile)
-	perm, _ := permbits.Stat(parentDir)
 
-	if !perm.UserWrite() {
+	if !fs.IsWriteable(parentDir) {
 		fmt.Println("Don't have sufficent permissions to delete", file)
 		os.Exit(1)
 	}
@@ -66,9 +63,5 @@ func putFile(file string) {
 		newPath = filename.String()
 	}
 
-	err = fs.MoveFile(absFile, newPath)
-	if err != nil {
-		fmt.Println("Something wrong file move")
-		os.Exit(1)
-	}
+	fs.MoveFile(absFile, newPath)
 }

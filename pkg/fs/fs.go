@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/phayes/permbits"
 )
 
 func GetTrashDir() string {
@@ -52,6 +54,18 @@ func AtomicWrite(path, content string) error {
 
 	f.WriteString(content)
 	return nil
+}
+
+func IsWriteable(path string) bool {
+	perm, _ := permbits.Stat(path)
+	return perm.UserWrite()
+}
+
+func IsExist(path string) bool {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return false
+	}
+	return true
 }
 
 func MoveFile(path, dest string) error {

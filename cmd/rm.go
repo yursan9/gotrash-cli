@@ -34,7 +34,9 @@ var rmCmd = &cobra.Command{
 of files or use pattern to delete files that match the pattern.`,
 	//Args: cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		rm.Run(args, pattern, interactive)
+		if len(args) != 0 {
+			rm.Run(args, pattern, interactive)
+		}
 	},
 }
 

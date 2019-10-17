@@ -12,7 +12,7 @@ import (
 func Run(files []string, pattern string, interactive bool) {
 	trashInfoDir := fs.GetTrashInfoDir()
 	trashlist := trashinfo.NewTrashList(trashInfoDir)
-	
+
 	if pattern != "" {
 		matched := trashlist.MatchTrash(pattern)
 		files = append(files, matched...)
