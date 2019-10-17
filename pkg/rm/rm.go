@@ -28,6 +28,10 @@ func Run(files []string, pattern string, interactive bool) {
 		return
 	}
 
+	if len(files) == 0 {
+		fmt.Println("Trash is empty")
+		os.Exit(0)
+	}
 	for _, file := range files {
 		fmt.Printf("Deleting... %s\n", file)
 	}
