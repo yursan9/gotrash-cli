@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"trash-cli/pkg/fs"
+	"trash-cli/pkg/prompt"
 )
 
 func Run() {
@@ -17,21 +18,8 @@ func Run() {
 	}
 
 	fmt.Printf("Deleting %d files...\n", n)
-	if prompt("Delete all trash permanently") {
+	if prompt.YesNo("Delete all trash permanently") {
 		fs.EmptyDir(trashInfoDir)
 		fs.EmptyDir(trashFilesDir)
 	}
-}
-
-func prompt(text string) bool {
-	var answer string
-
-	fmt.Print(text, " [Yes/No]? ")
-	fmt.Scanln(&answer)
-
-	if answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" {
-		return true
-	}
-
-	return false
 }

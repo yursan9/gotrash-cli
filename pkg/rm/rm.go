@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 	"trash-cli/pkg/fs"
+	"trash-cli/pkg/prompt"
 	"trash-cli/pkg/trashinfo"
 )
 
@@ -21,7 +22,7 @@ func Run(files []string, pattern string, interactive bool) {
 	if interactive {
 		for _, file := range files {
 			fmt.Printf("Deleting... %s\n", file)
-			if prompt() {
+			if prompt.YesNo("Are you sure") {
 				rmTrash(trashlist, file)
 			}
 		}
@@ -36,7 +37,7 @@ func Run(files []string, pattern string, interactive bool) {
 		fmt.Printf("Deleting... %s\n", file)
 	}
 
-	if prompt() {
+	if prompt.YesNo("Are you sure") {
 		for _, file := range files {
 			rmTrash(trashlist, file)
 		}
@@ -58,17 +59,4 @@ func rmTrash(trashlist trashinfo.TrashList, path string) {
 
 	fs.RmFile(trashInfoFile)
 	fs.RmFile(trashFile)
-}
-
-func prompt() bool {
-	var answer string
-
-	fmt.Print("Are you sure [Yes/No]? ")
-	fmt.Scanln(&answer)
-
-	if strings.HasPrefix(answer, "y") || strings.HasPrefix(answer, "Y") {
-		return true
-	}
-
-	return false
 }

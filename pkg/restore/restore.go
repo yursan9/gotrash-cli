@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 	"trash-cli/pkg/fs"
+	"trash-cli/pkg/prompt"
 	"trash-cli/pkg/trashinfo"
 )
 
@@ -18,7 +19,7 @@ func Run() {
 		fmt.Println(i, formattedTime, item.Path)
 	}
 
-	n := promptInt("Select number to restore")
+	n := prompt.Number("Select number to restore")
 	t := trashInfoList[n]
 
 	orig := filepath.Base(t.Name)
@@ -28,13 +29,4 @@ func Run() {
 
 	fs.MoveFile(orig, dest)
 	fs.RmFile(t.Name)
-}
-
-func promptInt(text string) int {
-	var answer int
-
-	fmt.Print(text, "? ")
-	fmt.Scanln(&answer)
-
-	return answer
 }
