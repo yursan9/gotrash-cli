@@ -19,7 +19,7 @@ func TestAtomicWrite(t *testing.T) {
 	expectedValue := []byte("Hello World!")
 
 	fn := filepath.Join(dir, "example")
-	atomicWrite(fn, value)
+	AtomicWrite(fn, value)
 
 	content, err := ioutil.ReadFile(fn)
 	if err != nil {
@@ -40,7 +40,7 @@ func TestMoveFile(t *testing.T) {
 
 	renamedtmp := filepath.Dir(tmpfile.Name())
 	renamedtmp = filepath.Join(renamedtmp, "b")
-	moveFile(tmpfile.Name(), renamedtmp)
+	MoveFile(tmpfile.Name(), renamedtmp)
 
 	if _, err := os.Stat(renamedtmp); os.IsNotExist(err) {
 		os.Remove(tmpfile.Name())
@@ -52,7 +52,7 @@ func TestMoveFile(t *testing.T) {
 func TestEnsureDir(t *testing.T) {
 	tmpDir := os.TempDir()
 	dir := filepath.Join(tmpDir, "test", "a", "dir")
-	ensureDir(dir, 0700)
+	EnsureDir(dir, 0700)
 
 	if err := os.Chdir(dir); err != nil {
 		t.Errorf("Can't make %s directory", dir)
@@ -67,7 +67,7 @@ func TestRmFile(t *testing.T) {
 	}
 	tmpfile.Close()
 
-	rmFile(tmpfile.Name())
+	RmFile(tmpfile.Name())
 	if _, err := os.Stat(tmpfile.Name()); os.IsExist(err) {
 		t.Errorf("Can't delete %s file", tmpfile.Name())
 	}
@@ -87,7 +87,7 @@ func TestEmptyDir(t *testing.T) {
 	}
 
 	dir := filepath.Dir(paths[0])
-	emptyDir(dir)
+	EmptyDir(dir)
 
 	for _, name := range paths {
 		if _, err := os.Stat(name); os.IsExist(err) {
