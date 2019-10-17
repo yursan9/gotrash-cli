@@ -9,8 +9,12 @@ import (
 func Run(terse bool) {
 	trashDir := fs.GetTrashInfoDir()
 	list := trashinfo.NewTrashList(trashDir)
-	list.SortByDate()
 
+	if len(list) == 0 {
+		fmt.Println("Trash is empty")
+	}
+
+	list.SortByDate()
 	for _, item := range list {
 		if terse {
 			fmt.Println(item.Path)
